@@ -2,15 +2,11 @@ using UnityEngine;
 
 public class BlocksPainter : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public void PaintAtStart(GameObject[,] Boxes, Material[] ColorsPerCapita)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        foreach(GameObject box in Boxes)
+        {
+            box.GetComponent<MeshRenderer>().material = ColorsPerCapita[Random.Range(0, ColorsPerCapita.Length)];
+        }
     }
 }
