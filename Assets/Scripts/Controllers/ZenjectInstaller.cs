@@ -8,15 +8,18 @@ public class ZenjectInstaller : MonoInstaller
         SignalBusInstaller.Install(Container);
         BindSignals();
 
-        Container.Bind<GameflowVisualManager>().FromComponentInHierarchy().AsCached();
-        Container.Bind<MapGenerator>().FromComponentInHierarchy().AsCached();
-        Container.Bind<ColorChooser>().FromComponentInHierarchy().AsCached();
-        Container.Bind<BlocksPainter>().FromComponentInHierarchy().AsCached();
-        Container.Bind<ColorsContainer>().FromComponentInHierarchy().AsCached();
+        Container.Bind<GameflowVisualManager>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<MapManager>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<MapGenerator>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<ColorChooser>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<BlocksPainter>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<ColorsContainer>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<InputController>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<Player>().FromComponentInHierarchy().AsSingle();
     }
 
     private void BindSignals()
     {
-        Container.BindSignal<GameflowManager.GameflowEvent>();
+        Container.DeclareSignal<GameflowManager.GameflowEvent>().OptionalSubscriber();
     }
 }

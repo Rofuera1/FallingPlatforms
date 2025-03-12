@@ -17,7 +17,8 @@ public class MapGenerator : MonoBehaviour
         {
             for(int y = 0; y < MapSize; y ++)
             {
-                Boxes[x, y] = Instantiate(BoxPrefab, StartTopRightPoint + Vector3.right * x + Vector3.down * y, Quaternion.identity);
+                Boxes[x, y] = Instantiate(BoxPrefab, StartTopRightPoint + Vector3.right * x - Vector3.forward * y, Quaternion.identity);
+                Boxes[x, y].transform.parent = CenterPosition;
             }
         }
     }

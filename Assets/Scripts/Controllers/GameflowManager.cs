@@ -48,8 +48,9 @@ public class GameflowManager : MonoBehaviour
         IterationID++;
 
         yield return VisualManager.NewLoop();
+        Debug.Log("нью луп - три тыс€чи залуп");
 
-        IterationChoosingColors();
+        StartCoroutine(IterationChoosingColors());
     }
     
     private IEnumerator IterationChoosingColors()
@@ -58,28 +59,28 @@ public class GameflowManager : MonoBehaviour
 
         yield return VisualManager.ColorChooser(ColorChooser.CurrentColors);
 
-        IterationWaitingForFalling();
+        StartCoroutine(IterationWaitingForFalling());
     }
 
     private IEnumerator IterationWaitingForFalling()
     {
         yield return VisualManager.DelayBeforeFalling();
 
-        IterationFalling();
+        StartCoroutine(IterationFalling());
     }
 
     private IEnumerator IterationFalling()
     {
         yield return VisualManager.Falling();
 
-        IterationPauseAfterFalling();
+        StartCoroutine(IterationPauseAfterFalling());
     }
 
     private IEnumerator IterationPauseAfterFalling()
     {
         yield return VisualManager.DelayAfterFalling();
 
-        MainLoop();
+        StartCoroutine(MainLoop());
     }
 
     private void OnEndGameWon()
