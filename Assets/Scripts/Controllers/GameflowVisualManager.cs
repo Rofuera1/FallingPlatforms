@@ -12,7 +12,6 @@ public class GameflowVisualManager : MonoBehaviour
 
     public IEnumerator NewLoop()
     {
-        Debug.Log("Ќью луп - сто залуп");
         yield return null;
     }
     public IEnumerator ColorChooser(ColorsOnCurrentLoop Colors)
@@ -51,6 +50,5 @@ public class GameflowVisualManager : MonoBehaviour
 
     public void OnEndGame(bool didWin)
     {
-        Debug.Log("Wow! You won? " + didWin);
     }
 }
