@@ -8,6 +8,7 @@ public class ZenjectInstaller : MonoInstaller
         SignalBusInstaller.Install(Container);
         BindSignals();
 
+        Container.Bind<GameflowManager>().FromComponentInHierarchy().AsSingle();
         Container.Bind<GameflowVisualManager>().FromComponentInHierarchy().AsSingle();
         Container.Bind<MapManager>().FromComponentInHierarchy().AsSingle();
         Container.Bind<MapGenerator>().FromComponentInHierarchy().AsSingle();
@@ -16,6 +17,12 @@ public class ZenjectInstaller : MonoInstaller
         Container.Bind<ColorsContainer>().FromComponentInHierarchy().AsSingle();
         Container.Bind<InputController>().FromComponentInHierarchy().AsSingle();
         Container.Bind<Player>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<PlayerTransform>().FromComponentInHierarchy().AsSingle();
+
+        Container.Bind<LightsOperator>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<Spotlight>().FromComponentInHierarchy().AsSingle();
+
+        Container.Bind<UI>().FromComponentInHierarchy().AsSingle();
     }
 
     private void BindSignals()

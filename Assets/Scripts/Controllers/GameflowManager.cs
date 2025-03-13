@@ -6,10 +6,16 @@ public class GameflowManager : MonoBehaviour
     [Zenject.Inject] private GameflowVisualManager VisualManager;
     [Zenject.Inject] private MapManager MapGenerator;
     [Zenject.Inject] private ColorChooser ColorChooser;
+    [Zenject.Inject] private Player Player;
+    [Zenject.Inject] private UI UI;
 
     [Zenject.Inject] private Zenject.SignalBus Signaller;
 
     [SerializeField] private int MaxIterations; // Move to scriptables
+    [SerializeField] private int WinCoinsAmount = 5; // Move to scriptables
+
+    private GameStates CurrentState;
+
     private int IterationID = 0;
 
     private void Awake()
@@ -17,38 +23,44 @@ public class GameflowManager : MonoBehaviour
         SignalNewState(GameStates.NotStarted);
 
         LoadMap();
+
+        Player.OnCoinCollected += OnCoinCollectedPlayer;
+        Player.FallenDown += OnEndGameLost;
     }
 
     private void SignalNewState(GameStates newState)
     {
-        Signaller.Fire(new GameflowEvent(newState));
+        CurrentState = newState;
+        Signaller.Fire(new GameflowEvent(CurrentState));
     }
 
     private void LoadMap()
     {
         MapGenerator.CreateMap();
-
-        StartGame();
     }
 
-    private void StartGame()
+    public void StartGame()
     {
+        UI.StartGame();
+
         SignalNewState(GameStates.Started);
         StartCoroutine(MainLoop());
+        Time.timeScale = 1f;
     }
 
     private IEnumerator MainLoop()
     {
-        if(IterationID >= MaxIterations)
+        if (CurrentState != GameStates.Started)
+            yield break;
+        if (IterationID >= MaxIterations)
         {
-            OnEndGameWon();
+            OnEndGameLost();
             yield break;
         }
 
         IterationID++;
 
         yield return VisualManager.NewLoop();
-        Debug.Log("нью луп - три тыс€чи залуп");
 
         StartCoroutine(IterationChoosingColors());
     }
@@ -71,7 +83,7 @@ public class GameflowManager : MonoBehaviour
 
     private IEnumerator IterationFalling()
     {
-        yield return VisualManager.Falling();
+        yield return VisualManager.Falling(ColorChooser.CurrentColors);
 
         StartCoroutine(IterationPauseAfterFalling());
     }
@@ -83,18 +95,33 @@ public class GameflowManager : MonoBehaviour
         StartCoroutine(MainLoop());
     }
 
+    private void OnCoinCollectedPlayer(int Amount)
+    {
+        UI.UpdateText(Amount, WinCoinsAmount);
+        if (Amount >= WinCoinsAmount)
+            OnEndGameWon();
+    }
+
     private void OnEndGameWon()
     {
-        Signaller.Fire(new GameflowEvent(GameStates.Ended));
+        if (CurrentState != GameStates.Started) return;
+
+        Signaller.Fire(new GameflowEvent(GameStates.Won));
 
         VisualManager.OnEndGame(true);
+        UI.EndGameWin();
+        Time.timeScale = 0f;
     }
 
     private void OnEndGameLost()
     {
-        Signaller.Fire(new GameflowEvent(GameStates.Ended));
+        if (CurrentState != GameStates.Started) return;
+
+        Signaller.Fire(new GameflowEvent(GameStates.Lost));
 
         VisualManager.OnEndGame(false);
+        UI.EndGameLost();
+        Time.timeScale = 0f;
     }
 
     public class GameflowEvent
@@ -111,6 +138,7 @@ public class GameflowManager : MonoBehaviour
     {
         NotStarted,
         Started,
-        Ended
+        Won,
+        Lost
     }
 }

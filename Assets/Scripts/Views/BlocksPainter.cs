@@ -2,11 +2,14 @@ using UnityEngine;
 
 public class BlocksPainter : MonoBehaviour
 {
-    public void PaintAtStart(GameObject[,] Boxes, Material[] ColorsPerCapita)
+    public void PaintAtStart(Box[,] Boxes, Material[] ColorsPerCapita)
     {
-        foreach(GameObject box in Boxes)
+        foreach(Box box in Boxes)
         {
-            box.GetComponent<MeshRenderer>().material = ColorsPerCapita[Random.Range(0, ColorsPerCapita.Length)];
+            Material Mat = ColorsPerCapita[Random.Range(0, ColorsPerCapita.Length)];
+
+            box.GetComponent<MeshRenderer>().material = Mat;
+            box.SetMaterial(Mat);
         }
     }
 }

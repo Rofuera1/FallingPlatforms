@@ -3,6 +3,13 @@ using UnityEngine;
 
 public class GameflowVisualManager : MonoBehaviour
 {
+    [Zenject.Inject] private LightsOperator LightsOperator;
+    [Zenject.Inject] private MapManager MapManager;
+
+    private float DelayTimeAfterColorChose = 1.5f;
+    private float DelayTimeBeforeFalling = 3f;
+    private float LightsOutBeforeFallingTime = 0.6f;
+
     public IEnumerator NewLoop()
     {
         Debug.Log("Нью луп - сто залуп");
@@ -10,24 +17,36 @@ public class GameflowVisualManager : MonoBehaviour
     }
     public IEnumerator ColorChooser(ColorsOnCurrentLoop Colors)
     {
-        Debug.Log("Текущий цвет - " + Colors.Colors[0]);
-        yield return null;
+        LightsOperator.OnChangeColorLightbulb(Colors.Colors[0]);
+        yield return new WaitForSeconds(DelayTimeAfterColorChose);
     }
 
     public IEnumerator DelayBeforeFalling()
     {
-        Debug.Log("АААА ЩА УПАДЕТ ВСЕ ЧЕРЕЗ 5 СЕКУНД");
-        yield return new WaitForSeconds(5f); // Move to scriptables
+        yield return LightsOutBeforeFalling();
+
+        yield return new WaitForSeconds(DelayTimeBeforeFalling);
     }
-    public IEnumerator Falling()
+
+    private IEnumerator LightsOutBeforeFalling()
     {
-        Debug.Log("Ну все, оно упало(");
-        yield return null;
+        LightsOperator.SetMainLight(false);
+
+        yield return new WaitForSeconds(LightsOutBeforeFallingTime);
+
+        LightsOperator.ActivateSpotlight(true);
+    }
+
+    public IEnumerator Falling(ColorsOnCurrentLoop Current)
+    {
+        yield return MapManager.FallObjects(Current, 0.1f);
     }
     public IEnumerator DelayAfterFalling()
     {
-        Debug.Log("Можешь передохнуть 5 сек");
-        yield return new WaitForSeconds(2f); // Move to scriptables
+        LightsOperator.ActivateSpotlight(false);
+        LightsOperator.SetMainLight(true);
+
+        yield return new WaitForSeconds(2f);    
     }
 
     public void OnEndGame(bool didWin)

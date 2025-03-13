@@ -18,15 +18,15 @@ public class ColorChooser : MonoBehaviour
     {
         if (ColorsToChooseAmount > ColorsPool.Count) throw new System.Exception("Exceeded amount of free colors");
 
-        List<Material> ColorsPoolLocal = new List<Material>();
-        ColorsPoolLocal.AddRange(ColorsPool);
-
         CurrentColors = new ColorsOnCurrentLoop(ColorsToChooseAmount);
         for(int i = 0; i < ColorsToChooseAmount; i++)
         {
-            int RandomID = Random.Range(0, ColorsPoolLocal.Count);
-            CurrentColors.Colors[i] = ColorsPoolLocal[RandomID];
-            ColorsPoolLocal.RemoveAt(RandomID);
+            int RandomID = Random.Range(0, ColorsPool.Count);
+
+            Material MatChosen = ColorsPool[RandomID];
+
+            CurrentColors.Colors[i] = MatChosen;
+            ColorsPool.Remove(MatChosen);
         }
     }
 }

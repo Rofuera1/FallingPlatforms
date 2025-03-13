@@ -5,6 +5,7 @@ public class InputController : MonoBehaviour
 {
     public Action<Vector2> OnPressingMovement;
     public Action OnPressedSpace;
+    public Action OnPressedShift;
 
     private void Update()
     {
@@ -22,7 +23,9 @@ public class InputController : MonoBehaviour
         if(CurrentMovement.magnitude != 0)
             OnPressingMovement?.Invoke(CurrentMovement);
 
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
             OnPressedSpace?.Invoke();
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+            OnPressedShift?.Invoke();
     }
 }

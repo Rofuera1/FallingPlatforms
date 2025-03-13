@@ -4,11 +4,21 @@ public class PlayerMover : MonoBehaviour
 {
     [Zenject.Inject] private InputController Input;
     [Zenject.Inject] private Player Player;
+    [Zenject.Inject] private Zenject.SignalBus Signaller;
 
     private void Awake()
     {
-        Input.OnPressingMovement += OnMovePlayer;
-        Input.OnPressedSpace += OnJumpPlayer;
+        Signaller.Subscribe<GameflowManager.GameflowEvent>(SubscribeToEvents);
+    }
+
+    private void SubscribeToEvents(GameflowManager.GameflowEvent Event)
+    {
+        if(Event.NewState == GameflowManager.GameStates.Started)
+        {
+            Input.OnPressingMovement += OnMovePlayer;
+            Input.OnPressedSpace += OnJumpPlayer;
+            Input.OnPressedShift += OnDash;
+        }
     }
 
     private void OnMovePlayer(Vector2 Delta)
@@ -19,5 +29,10 @@ public class PlayerMover : MonoBehaviour
     private void OnJumpPlayer()
     {
         Player.OnTryJump();
+    }
+
+    private void OnDash()
+    {
+        Player.OnDash();
     }
 }
